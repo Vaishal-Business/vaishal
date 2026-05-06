@@ -67,15 +67,16 @@ p {
 .box {
     border: 1px solid #222;
     padding: 18px;
-    width: 80px;
+    width: auto;
     border-radius: 10px;
     transition: 0.3s;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(10px);
 }
 
 .box:hover {
     transform: translateY(-5px);
     border-color: #555;
+    backdrop-filter: blur(10px);
 }
 
 .box span {
@@ -139,9 +140,7 @@ button:hover {
         <div class="box"><span id="seconds">00</span><small>Seconds</small></div>
     </div>
 
-    <div class="input-group">
-        <input type="email" placeholder="Enter your email">
-        <button>Notify</button>
+
     </div>
 </div>
 
