@@ -10,153 +10,127 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Inter", "Segoe UI", sans-serif;
+    font-family: "Inter", sans-serif;
 }
 
 body {
     height: 100vh;
-    background: radial-gradient(circle at 20% 20%, #0f172a, #020617 60%);
-    color: white;
+    background: #000;
+    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
 }
 
-/* glowing background blobs */
-body::before, body::after {
-    content: "";
+/* canvas background */
+canvas {
     position: absolute;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(56,189,248,0.3), transparent 70%);
-    filter: blur(80px);
-    animation: float 10s infinite ease-in-out alternate;
+    top: 0;
+    left: 0;
 }
 
-body::after {
-    right: -100px;
-    bottom: -100px;
-    background: radial-gradient(circle, rgba(129,140,248,0.3), transparent 70%);
-    animation-delay: 3s;
-}
-
-@keyframes float {
-    from { transform: translateY(0px); }
-    to { transform: translateY(-40px); }
-}
-
+/* content */
 .container {
-    text-align: center;
+    position: relative;
     z-index: 2;
+    text-align: center;
     max-width: 600px;
     animation: fadeUp 1s ease forwards;
     opacity: 0;
 }
 
 @keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 h1 {
     font-size: 3.5rem;
     letter-spacing: 2px;
-    background: linear-gradient(90deg, #38bdf8, #818cf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 600;
 }
 
 p {
-    margin-top: 15px;
-    color: #94a3b8;
-    font-size: 1.1rem;
+    margin-top: 12px;
+    color: #aaa;
 }
 
 /* countdown */
 .countdown {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 18px;
     margin-top: 40px;
 }
 
 .box {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 14px;
-    width: 85px;
-    backdrop-filter: blur(12px);
+    border: 1px solid #222;
+    padding: 18px;
+    width: 80px;
+    border-radius: 10px;
     transition: 0.3s;
+    backdrop-filter: blur(4px);
 }
 
 .box:hover {
-    transform: translateY(-6px) scale(1.05);
-    border-color: rgba(129,140,248,0.5);
+    transform: translateY(-5px);
+    border-color: #555;
 }
 
 .box span {
-    display: block;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
 }
 
 .box small {
-    color: #64748b;
+    color: #777;
 }
 
-/* email */
+/* input */
 .input-group {
     margin-top: 40px;
-    animation: fadeUp 1.4s ease forwards;
 }
 
 input {
     padding: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    width: 260px;
-    background: #020617;
+    border-radius: 8px;
+    width: 240px;
+    background: transparent;
+    border: 1px solid #222;
     color: #fff;
-    border: 1px solid #1e293b;
-    transition: 0.3s;
+    outline: none;
 }
 
 input:focus {
-    border-color: #38bdf8;
+    border-color: #666;
 }
 
 button {
-    padding: 12px 18px;
-    border: none;
+    padding: 12px 16px;
     margin-left: 10px;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #111;
     color: #fff;
     cursor: pointer;
     transition: 0.3s;
 }
 
 button:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
+    background: #fff;
+    color: #000;
 }
 </style>
 </head>
 
 <body>
 
+<canvas id="mesh"></canvas>
+
 <div class="container">
     <h1>Coming Soon</h1>
-    <p>We're building something amazing. Stay tuned.</p>
+    <p>We're building something minimal.</p>
 
     <div class="countdown">
         <div class="box"><span id="days">00</span><small>Days</small></div>
@@ -167,32 +141,120 @@ button:hover {
 
     <div class="input-group">
         <input type="email" placeholder="Enter your email">
-        <button>Notify Me</button>
+        <button>Notify</button>
     </div>
 </div>
 
 <script>
+// ===== COUNTDOWN =====
 const launchDate = new Date("2026-06-01T00:00:00").getTime();
 
-const timer = setInterval(() => {
+setInterval(() => {
     const now = new Date().getTime();
-    const distance = launchDate - now;
+    const d = launchDate - now;
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((distance / (1000 * 60)) % 60);
-    const seconds = Math.floor((distance / 1000) % 60);
-
-    document.getElementById("days").innerText = days;
-    document.getElementById("hours").innerText = hours;
-    document.getElementById("minutes").innerText = minutes;
-    document.getElementById("seconds").innerText = seconds;
-
-    if (distance < 0) {
-        clearInterval(timer);
-        document.querySelector(".countdown").innerHTML = "🚀 We are live!";
-    }
+    document.getElementById("days").innerText = Math.floor(d / (1000*60*60*24));
+    document.getElementById("hours").innerText = Math.floor((d/(1000*60*60))%24);
+    document.getElementById("minutes").innerText = Math.floor((d/(1000*60))%60);
+    document.getElementById("seconds").innerText = Math.floor((d/1000)%60);
 }, 1000);
+
+
+// ===== MESH NETWORK =====
+const canvas = document.getElementById("mesh");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let points = [];
+const count = 80;
+let mouse = { x: null, y: null };
+
+window.addEventListener("mousemove", e => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+});
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+class Point {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = (Math.random() - 0.5) * 0.6;
+    }
+
+    move() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < count; i++) {
+    points.push(new Point());
+}
+
+function connect() {
+    for (let i = 0; i < points.length; i++) {
+        for (let j = i; j < points.length; j++) {
+            let dx = points[i].x - points[j].x;
+            let dy = points[i].y - points[j].y;
+            let dist = dx * dx + dy * dy;
+
+            if (dist < 12000) {
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(255,255,255,0.08)";
+                ctx.moveTo(points[i].x, points[i].y);
+                ctx.lineTo(points[j].x, points[j].y);
+                ctx.stroke();
+            }
+
+            // mouse interaction
+            if (mouse.x && mouse.y) {
+                let dxm = points[i].x - mouse.x;
+                let dym = points[i].y - mouse.y;
+                let distMouse = dxm * dxm + dym * dym;
+
+                if (distMouse < 20000) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+                    ctx.moveTo(points[i].x, points[i].y);
+                    ctx.lineTo(mouse.x, mouse.y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    points.forEach(p => {
+        p.move();
+        p.draw();
+    });
+
+    connect();
+    requestAnimationFrame(animate);
+}
+
+animate();
 </script>
 
 </body>
