@@ -10,33 +10,65 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: "Inter", "Segoe UI", sans-serif;
 }
 
 body {
     height: 100vh;
-    background:#0000;
-    color: #000000;
+    background: radial-gradient(circle at 20% 20%, #0f172a, #020617 60%);
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
 }
 
+/* glowing background blobs */
+body::before, body::after {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(56,189,248,0.3), transparent 70%);
+    filter: blur(80px);
+    animation: float 10s infinite ease-in-out alternate;
+}
 
+body::after {
+    right: -100px;
+    bottom: -100px;
+    background: radial-gradient(circle, rgba(129,140,248,0.3), transparent 70%);
+    animation-delay: 3s;
+}
 
-
+@keyframes float {
+    from { transform: translateY(0px); }
+    to { transform: translateY(-40px); }
+}
 
 .container {
     text-align: center;
     z-index: 2;
     max-width: 600px;
+    animation: fadeUp 1s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     letter-spacing: 2px;
-    background: #FFFF;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -47,7 +79,7 @@ p {
     font-size: 1.1rem;
 }
 
-/* Countdown */
+/* countdown */
 .countdown {
     display: flex;
     justify-content: center;
@@ -59,14 +91,20 @@ p {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     padding: 20px;
-    border-radius: 12px;
-    width: 80px;
-    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    width: 85px;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+}
+
+.box:hover {
+    transform: translateY(-6px) scale(1.05);
+    border-color: rgba(129,140,248,0.5);
 }
 
 .box span {
     display: block;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
 }
 
@@ -74,27 +112,33 @@ p {
     color: #64748b;
 }
 
-/* Email input */
+/* email */
 .input-group {
     margin-top: 40px;
+    animation: fadeUp 1.4s ease forwards;
 }
 
 input {
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 10px;
     border: none;
     outline: none;
-    width: 250px;
+    width: 260px;
     background: #020617;
     color: #fff;
     border: 1px solid #1e293b;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #38bdf8;
 }
 
 button {
     padding: 12px 18px;
     border: none;
     margin-left: 10px;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(90deg, #38bdf8, #818cf8);
     color: #fff;
     cursor: pointer;
@@ -102,7 +146,8 @@ button {
 }
 
 button:hover {
-    opacity: 0.85;
+    transform: scale(1.05);
+    opacity: 0.9;
 }
 </style>
 </head>
@@ -120,12 +165,13 @@ button:hover {
         <div class="box"><span id="seconds">00</span><small>Seconds</small></div>
     </div>
 
-
+    <div class="input-group">
+        <input type="email" placeholder="Enter your email">
+        <button>Notify Me</button>
     </div>
 </div>
 
 <script>
-// Set launch date (YYYY-MM-DD)
 const launchDate = new Date("2026-06-01T00:00:00").getTime();
 
 const timer = setInterval(() => {
